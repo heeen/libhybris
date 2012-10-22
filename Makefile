@@ -12,7 +12,7 @@ COMMON_SOURCES=common/strlcpy.c common/hooks.c common/properties.c
 
 GINGERBREAD_SOURCES=gingerbread/linker.c gingerbread/dlfcn.c gingerbread/rt.c gingerbread/linker_environ.c gingerbread/linker_format.c
 
-all: libhybris_gingerbread.so.1 test_gingerbread libEGL.so.1 test_egl libGLESv2.so.2 test_glesv2
+all: libhybris_gingerbread.so.1 test_gingerbread libEGL.so.1 test_egl libGLESv2.so.2 test_glesv2 fbdev_test
 
 libhybris_gingerbread.so.1: $(COMMON_SOURCES) $(GINGERBREAD_SOURCES)
 	$(CC) -g -shared -o $@ -ldl -pthread -fPIC -Igingerbread -Icommon -Iinclude \
@@ -32,8 +32,8 @@ libhardware.so.1: hardware/hardware.c libhybris_gingerbread.so.1
 libEGL.so.1: libEGL.so.1.0
 	ln -sf libEGL.so.1.0 libEGL.so.1
 
-test_egl: libEGL.so.1 egl/test.c egl/dummy_native_window.c libhybris_gingerbread.so.1 libhardware.so.1
-	$(CC) -g -Iinclude -o $@ libEGL.so.1 libhybris_gingerbread.so.1 libhardware.so.1 egl/test.c egl/dummy_native_window.c
+test_egl: libEGL.so.1 egl/test.c egl/dummy_native_window.c libhybris_gingerbread.so.1 libhardware.so.1 libGLESv2.so.2
+	$(CC) -g -Iinclude -o $@ libEGL.so.1 libhybris_gingerbread.so.1 libhardware.so.1 libGLESv2.so.2 egl/test.c egl/dummy_native_window.c
  
 libGLESv2.so.2.0: glesv2/gl2.c libhybris_gingerbread.so.1
 	$(CC) -g -shared -Iinclude -o $@ -fPIC -Wl,-soname,libGLESv2.so.2 $< libhybris_gingerbread.so.1
@@ -45,4 +45,8 @@ test_glesv2: libEGL.so.1 libGLESv2.so.2 egl/test.c libhybris_gingerbread.so.1
 	$(CC) -g -Iinclude -o $@ -lm libEGL.so.1 libhybris_gingerbread.so.1 libGLESv2.so.2 glesv2/test.c
 
 clean:
-	rm -rf libhybris_gingerbread.so test_gingerbread lib*.so*
+	rm -rf libhybris_gingerbread.so test_gingerbread lib*.so* fbdev_test
+
+
+fbdev_test: libEGL.so.1 libhybris_gingerbread.so.1 libhardware.so.1 libGLESv2.so.2 egl/nativewindowbase.h egl/fbdev_window.h egl/fbdev_window.cpp egl/offscreen_window.h egl/offscreen_window.cpp egl/fbdev_test.cpp
+	$(CXX) -g -Iinclude -o $@ libEGL.so.1 libhybris_gingerbread.so.1 libhardware.so.1 libGLESv2.so.2 egl/fbdev_test.cpp egl/offscreen_window.cpp egl/fbdev_window.cpp
