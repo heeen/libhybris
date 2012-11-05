@@ -27,6 +27,7 @@ class OffscreenNativeWindow : public BaseNativeWindow
 public:
     OffscreenNativeWindow(unsigned int width, unsigned int height, unsigned int format = 5);
     ~OffscreenNativeWindow();
+    OffscreenNativeWindowBuffer* getFrontBuffer();
 protected:
     // overloads from BaseNativeWindow
     virtual int setSwapInterval(int interval);

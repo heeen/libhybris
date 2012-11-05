@@ -126,6 +126,9 @@ OffscreenNativeWindow::OffscreenNativeWindow(unsigned int aWidth, unsigned int a
 OffscreenNativeWindow::~OffscreenNativeWindow() {
     TRACE("%s\n",__PRETTY_FUNCTION__);
 }
+OffscreenNativeWindowBuffer* OffscreenNativeWindow::getFrontBuffer() {
+    return m_buffers[m_frontbuffer];
+}
 
 // overloads from BaseNativeWindow
 int OffscreenNativeWindow::setSwapInterval(int interval) {
