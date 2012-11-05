@@ -158,6 +158,7 @@ private:
 
     static int _query(const struct ANativeWindow* window, int what, int* value)
     {
+        printf("_query window %p %i %p\n", window, what, value);
         const BaseNativeWindow* self=static_cast<const BaseNativeWindow*>(window);
         switch (what) {
             case NATIVE_WINDOW_WIDTH:
@@ -168,6 +169,7 @@ private:
                 return NO_ERROR;
             case NATIVE_WINDOW_FORMAT:
                 *value = self->format();
+                printf("done\n");
                 return NO_ERROR;
             case NATIVE_WINDOW_CONCRETE_TYPE:
                 *value = self->type();
@@ -185,6 +187,7 @@ private:
                 *value = self->transformHint();
                 return NO_ERROR;
         }
+        printf("huh?\n");
         TRACE("EGL error: unkown window attribute!\n");
         *value = 0;
         return BAD_VALUE;
